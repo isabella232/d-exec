@@ -11,10 +11,10 @@ class Server {
       Socket s = ss.accept();
       System.out.println("Server Started...");
 
-      // DataInputStream to read data from input stream
+      // DataInputStream to read data from TCP input stream
       DataInputStream inp = new DataInputStream(s.getInputStream());
 
-      // DataOutputStream to write data on outut stream
+      // DataOutputStream to write data on TCP outut stream
       DataOutputStream out = new DataOutputStream(s.getOutputStream());
 
       while (true) {
@@ -31,14 +31,15 @@ class Server {
         }
         out.write(longtoBytes(value));
       }
-
-      ss.close();
     } catch (Exception e) {
-      System.out.println("Caught exception: " + e.getMessage());
+      System.out.println("TCP server caught generic exception: " + e);
+    } finally {
+      ss.close();
     }
   }
 
-  public static long convertToLong(byte[] data) {
+  // Convert bytes array to long value
+  public static long convertToLong(final byte[] data) {
     if (data == null || data.length != 8)
       return 0x0;
     else
@@ -51,7 +52,8 @@ class Server {
           (long)(0xff & data[1]) << 8 | (long)(0xff & data[0]));
   }
 
-  private static byte[] longtoBytes(long data) {
+  // Convert long value to bytes array
+  private static byte[] longtoBytes(final long data) {
     return new byte[] {
         (byte)(data & 0xff),         (byte)((data >> 8) & 0xff),
         (byte)((data >> 16) & 0xff), (byte)((data >> 24) & 0xff),
