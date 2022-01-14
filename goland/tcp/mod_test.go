@@ -22,7 +22,7 @@ func TestService_Execute(t *testing.T) {
 	srvc := NewExecution()
 
 	step := execution.Step{
-		Current: fakeTx{address: "localhost:6789"},
+		Current: fakeTx{address: "localhost:12347"},
 	}
 
 	res, err := srvc.Execute(store, step)

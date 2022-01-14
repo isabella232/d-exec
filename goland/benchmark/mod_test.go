@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"testing"
 
 	"github.com/dedis/d-exec/goland/evm"
@@ -13,6 +14,8 @@ import (
 	"go.dedis.ch/kyber/v3/suites"
 )
 
+var storeKey = [32]byte{0, 0, 10}
+
 const iterations = 50
 
 var suite = suites.MustFind("Ed25519")
@@ -24,6 +27,10 @@ func BenchmarkNative_Increment(b *testing.B) {
 		k := 0
 		k++
 	}
+}
+
+func BenchmarkGraalvmTCP_Increment(b *testing.B) {
+	testWithAddr(b, "127.0.0.1:12347")
 }
 
 func BenchmarkLocalTCP_Increment(b *testing.B) {
@@ -125,6 +132,12 @@ func testWithAddr(b *testing.B, addr string) {
 		args: map[string][]byte{"tcp:addr": []byte(addr)},
 	}}
 	exec := tcp.NewExecution()
+
+	initialCounter := uint64(1234)
+
+	buffer := make([]byte, 8)
+	binary.LittleEndian.PutUint64(buffer, initialCounter)
+	storage.Set(storeKey[:], buffer)
 
 	for i := 0; i < n; i++ {
 		_, err := exec.Execute(storage, step)

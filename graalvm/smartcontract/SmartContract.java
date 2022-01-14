@@ -11,8 +11,12 @@ public class SmartContract {
     }
 
     long value = convertToLong(input);
+    
+    System.out.println("Received value: " + value);
 
     value++;
+
+    System.out.println("Incremented value sent back: " + value);
 
     byte[] output = longtoBytes(value);
 

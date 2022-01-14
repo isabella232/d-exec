@@ -20,6 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/eth/tracers/logger"
 	"github.com/ethereum/go-ethereum/params"
 	"go.dedis.ch/dela/core/execution"
 	"go.dedis.ch/dela/core/store"
@@ -449,23 +450,15 @@ func getVMConfig() vm.Config {
 		// Debug enables debugging Interpreter options
 		Debug: false,
 		// Tracer is the op code logger
-		Tracer: vm.NewStructLogger(&vm.LogConfig{
+		Tracer: logger.NewStructLogger(&logger.Config{
 			Debug: true,
 		}),
-		// NoRecursion disables Interpreter call, callcode,
-		// delegate call and create.
-		NoRecursion: false,
 		// Enable recording of SHA3/keccak preimages
 		EnablePreimageRecording: true,
-		// JumpTable contains the EVM instruction table. This
-		// may be left uninitialised and will be set to the default
-		// table.
-		//JumpTable [256]operation
-		//JumpTable: ,
-		// Type of the EWASM interpreter
-		EWASMInterpreter: "",
-		// Type of the EVM interpreter
-		EVMInterpreter: "",
+		// EVM instruction table, automatically populated if unset
+		JumpTable: nil,
+		// Additional EIPS that are to be enabled
+		ExtraEips: []int{},
 	}
 
 	return *vmconfig
