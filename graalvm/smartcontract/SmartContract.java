@@ -20,7 +20,7 @@ public class SmartContract {
   }
 
   // Convert bytes array to long value
-  long convertToLong(final byte[] data) {
+  private long convertToLong(final byte[] data) {
     if (data == null || data.length != 8)
       return 0x0;
     else
@@ -34,7 +34,7 @@ public class SmartContract {
   }
 
   // Convert long value to bytes array
-  byte[] longtoBytes(final long data) {
+  private byte[] longtoBytes(final long data) {
     return new byte[] {
         (byte)(data & 0xff),         (byte)((data >> 8) & 0xff),
         (byte)((data >> 16) & 0xff), (byte)((data >> 24) & 0xff),
