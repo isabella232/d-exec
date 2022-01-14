@@ -8,7 +8,7 @@ class Server {
   public static void main(String args[]) throws Exception {
     final int portNumber = 12347;
     ServerSocket ss = new ServerSocket(portNumber);
-    System.out.println("TCP server started...");
+    System.out.println("TCP server started on port " + portNumber);
 
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
