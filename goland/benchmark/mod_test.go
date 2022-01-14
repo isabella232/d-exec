@@ -3,11 +3,11 @@ package main
 import (
 	"testing"
 
+	"github.com/dedis/d-exec/goland/evm"
+	"github.com/dedis/d-exec/goland/tcp"
+
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/execution/evm"
-
-	"go.dedis.ch/dela/core/execution/tcp"
 	"go.dedis.ch/dela/core/store"
 	"go.dedis.ch/dela/core/txn"
 	"go.dedis.ch/kyber/v3/suites"
@@ -103,17 +103,17 @@ func BenchmarkEVMLocal_EC(b *testing.B) {
 		}
 	}
 
-//	gasUsageBuf, err := storage.Get(gasUsageKey[:])
-//	require.NoError(b, err)
+	//	gasUsageBuf, err := storage.Get(gasUsageKey[:])
+	//	require.NoError(b, err)
 
-//	gasUsage := float64(binary.LittleEndian.Uint64(gasUsageBuf))
+	//	gasUsage := float64(binary.LittleEndian.Uint64(gasUsageBuf))
 
-//	runCountBuf, err := storage.Get(runCountKey[:])
-//	require.NoError(b, err)
+	//	runCountBuf, err := storage.Get(runCountKey[:])
+	//	require.NoError(b, err)
 
-//	runCount := float64(binary.LittleEndian.Uint64(runCountBuf))
+	//	runCount := float64(binary.LittleEndian.Uint64(runCountBuf))
 
-//	fmt.Printf("Did %f multiplications. Average Gas Usage=%.2f\n", runCount, gasUsage/runCount)
+	//	fmt.Printf("Did %f multiplications. Average Gas Usage=%.2f\n", runCount, gasUsage/runCount)
 
 }
 

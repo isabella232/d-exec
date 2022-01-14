@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	"go.dedis.ch/dela/core/execution/evm"
+	"github.com/dedis/d-exec/goland/evm"
 )
 
 func main() {
