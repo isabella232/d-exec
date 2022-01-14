@@ -1,0 +1,36 @@
+name: Go Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  tests:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./goland
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.17
+
+    - name: Benchmark native increment
+      run: go test -benchmem -run=^$ -bench ^BenchmarkNative_Increment$ ./benchmark/...
+
+    - name: Benchmark EVM local increment
+      run: go test -benchmem -run=^$ -bench ^BenchmarkEVMLocal_Increment$ ./benchmark/...
+
+    - name: Benchmark native EC
+      run: go test -benchmem -run=^$ -bench ^BenchmarkNative_EC$ ./benchmark/...
+
+    - name: Benchmark EVM local EC
+      run: go test -benchmem -run=^$ -bench ^BenchmarkEVMLocal_EC$ ./benchmark/...
