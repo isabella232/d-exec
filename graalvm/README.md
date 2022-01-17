@@ -30,3 +30,42 @@ Main steps on MacOS:
    gu install native-language
    ```
    
+jenv installation:
+==================
+Source: https://www.jenv.be
+
+Once installed, you'll need to source your ~/.bash_profile to ensure that you 
+can execute the jenv commands to configure and use the jenv:
+
+1) add the official JDK to the known environments:
+   ```bash
+   jenv add /Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home
+   ```
+2) add the graalvm to the known environments:
+   ```bash
+   jenv add /Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home
+   ```
+3) list the environments:
+   ```bash
+   jenv versions
+   ```
+4) pick and apply a version in your shell env:
+   ```bash
+   jenv shell 17.0.1
+   ```
+5) verify the version in use:
+   ```bash
+   jenv version --verbose
+   ```
+
+Note: be aware that you'll have to re-build the `Server.java` using:
+   ```bash
+   ./build.sh
+   ```
+   whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
+
+
+
+
+
+
