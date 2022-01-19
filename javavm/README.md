@@ -12,7 +12,7 @@ sudo mv graalvm-ce-java17-21.3.0 /Library/Java/JavaVirtualMachines
 ```bash
 sudo xattr -r -d com.apple.quarantine /Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0
 ```
-5) If you don't use jenv (see bellow), you'll need to edit your ~/.bash_profile:
+5) If you don't use jenv (see below), you'll need to edit your ~/.bash_profile:
 ```bash
 export PATH=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home/bin:$PATH
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home
