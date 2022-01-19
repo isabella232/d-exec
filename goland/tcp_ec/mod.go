@@ -1,7 +1,5 @@
-// Package tcp_ec contains a TCP server implementation that receives a
-// hex-encoded ED25519 scalar, and compute s*G. It returns the point
-// hex-encoded.
-
+// Package tcp_ec implements an execution environment to compute s*G using a TCP
+// server.
 package tcp_ec
 
 import (
@@ -10,6 +8,7 @@ import (
 	"time"
 
 	"encoding/hex"
+
 	"go.dedis.ch/dela"
 	"go.dedis.ch/dela/core/execution"
 	"go.dedis.ch/dela/core/store"

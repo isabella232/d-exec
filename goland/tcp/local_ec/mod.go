@@ -1,14 +1,14 @@
 // Package main implements a simple TCP server that computes s*G on ED25519.
-
 package main
 
 import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"net"
+
 	"go.dedis.ch/kyber/v3/suites"
 	"golang.org/x/xerrors"
-	"net"
 )
 
 var suite = suites.MustFind("Ed25519")

@@ -1,6 +1,5 @@
 // Package unikernel_net_fs_ec implements an execution environment that uses the
 // network and filesystem to perform s*G on ED25519.
-
 package unikernel_net_fs_ec
 
 import (
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"encoding/hex"
+
 	"go.dedis.ch/dela"
 	"go.dedis.ch/dela/core/execution"
 	"go.dedis.ch/dela/core/store"

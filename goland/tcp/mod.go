@@ -1,3 +1,5 @@
+// Package tcp implements an execution environment that sends a value to a TCP
+// server and stores it back. Used for the "increment" benchmark.
 package tcp
 
 import (
