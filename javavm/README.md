@@ -12,12 +12,12 @@ sudo mv graalvm-ce-java17-21.3.0 /Library/Java/JavaVirtualMachines
 ```bash
 sudo xattr -r -d com.apple.quarantine /Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0
 ```
-5) edit .bash_profile:
+5) If you don't use jenv (see bellow), you'll need to edit your ~/.bash_profile:
 ```bash
 export PATH=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home/bin:$PATH
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home
 ```
-6) verify the new java version: 
+1) verify the new java version: 
 ```bash
 java -version
 ```
@@ -35,7 +35,11 @@ jenv installation:
 Source: https://www.jenv.be
 
 Once installed, you'll need to source your ~/.bash_profile to ensure that you 
-can execute the jenv commands to configure and use the jenv:
+can execute the jenv commands to configure and use the jenv. On MacOS, you may 
+need to add the following to your ~/.zshrc file so the terminal :
+```bash
+source $HOME/.bash_profile
+```
 
 1) add the official JDK to the known environments:
 ```bash
@@ -63,9 +67,3 @@ Note: be aware that you'll have to re-build the `Server.java` using:
 ./build.sh
 ```
 whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
-
-
-
-
-
-
