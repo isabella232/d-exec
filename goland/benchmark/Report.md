@@ -133,12 +133,12 @@ We perform two series of experiment:
 
 ## Results
 
-|   [ns/op]    |Increment|Simple crypto|
-|--------------|---------|-------------|
-| Native       |0.00     |0.005        |
-| Unikernel    |0.470    |             |
-| TCP          |0.014    |             |
-| Solidity     |0.001    |0.237        |
-| Solidity TCP |0.014    |             |
-| WASM Go      |0.0238   |0.058        |
-| WASM C       |0.0162   |0.052        |
+|   [ns/op]    |Increment  |Simple crypto|
+|--------------|-----------|-------------|
+| Native       |0.00       |0.005        |
+| Unikernel    |2342209082 |6072048716   |
+| TCP          |0.014      |0.03646      |
+| Solidity     |0.001      |0.237        |
+| Solidity TCP |0.014      |             |
+| WASM Go      |0.0238     |0.058        |
+| WASM C       |0.0162     |0.052        |

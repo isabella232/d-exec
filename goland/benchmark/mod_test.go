@@ -6,6 +6,8 @@ import (
 
 	"github.com/dedis/d-exec/goland/evm"
 	"github.com/dedis/d-exec/goland/tcp"
+	"github.com/dedis/d-exec/goland/tcp_ec"
+	"github.com/dedis/d-exec/goland/unikernel_net_fs_ec"
 
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/core/execution"
@@ -38,7 +40,7 @@ func BenchmarkLocalTCP_Increment(b *testing.B) {
 }
 
 func BenchmarkUnikernelTCP_Increment(b *testing.B) {
-	testWithAddr(b, "172.52.0.10:12345")
+	testWithAddr(b, "172.44.0.2:12345")
 }
 
 func BenchmarkEVMLocal_Increment(b *testing.B) {
@@ -122,6 +124,58 @@ func BenchmarkEVMLocal_EC(b *testing.B) {
 
 	//	fmt.Printf("Did %f multiplications. Average Gas Usage=%.2f\n", runCount, gasUsage/runCount)
 
+}
+
+func BenchmarkTCP_Simple_EC(b *testing.B) {
+	addr := "127.0.0.1:12346"
+	storeKey := [32]byte{0, 0, 10}
+
+	storage := newInmemory()
+	step := execution.Step{Previous: []txn.Transaction{}, Current: tx{
+		args: map[string][]byte{"tcp:addr": []byte(addr)},
+	}}
+	exec := tcp_ec.NewExecution()
+
+	for i := 0; i < iterations; i++ {
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+
+		scalarBuf, err := scalar.MarshalBinary()
+		require.NoError(b, err)
+
+		storage.Set(storeKey[:], scalarBuf)
+
+		_, err = exec.Execute(storage, step)
+		if err != nil {
+			b.Logf("failed to execute; %v", err)
+			b.FailNow()
+		}
+	}
+}
+
+func BenchmarkUnikernel_Network_FS_Simple_EC(b *testing.B) {
+	addr := "172.44.0.2:1024"
+	storeKey := [32]byte{0, 0, 10}
+
+	storage := newInmemory()
+	step := execution.Step{Previous: []txn.Transaction{}, Current: tx{
+		args: map[string][]byte{"tcp:addr": []byte(addr)},
+	}}
+	exec := unikernel_net_fs_ec.NewExecution()
+
+	for i := 0; i < iterations; i++ {
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+
+		scalarBuf, err := scalar.MarshalBinary()
+		require.NoError(b, err)
+
+		storage.Set(storeKey[:], scalarBuf)
+
+		_, err = exec.Execute(storage, step)
+		if err != nil {
+			b.Logf("failed to execute; %v", err)
+			b.FailNow()
+		}
+	}
 }
 
 func testWithAddr(b *testing.B, addr string) {

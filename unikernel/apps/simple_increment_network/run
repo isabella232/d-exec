@@ -1,7 +1,6 @@
 #!/bin/bash
 
-fs_mount="mnt/"
-kvm_image="build/simple_crypto_network_fs_kvm-x86_64"
+kvm_image="build/simple_increment_network_kvm-x86_64"
 qemu_script="./qemu-guest"
 bridge_iface="uk0"
 bridge_ip="172.44.0.1"
@@ -12,4 +11,4 @@ sudo brctl addbr "$bridge_iface" || true
 sudo ifconfig "$bridge_iface" "$bridge_ip"
 
 echo "Starting KVM image connected to bridge interface $bridge_iface ..."
-"$qemu_script" -k "$kvm_image" -e "$fs_mount" -b "$bridge_iface" -m 4096 -a "netdev.ipv4_addr=172.44.0.2 netdev.ipv4_gw_addr=172.44.0.1 netdev.ipv4_subnet_mask=255.255.255.0 -- 1024"
+"$qemu_script" -k "$kvm_image" -b "$bridge_iface" -m 4096 -a "netdev.ipv4_addr=172.44.0.2 netdev.ipv4_gw_addr=172.44.0.1 netdev.ipv4_subnet_mask=255.255.255.0 --"
