@@ -129,16 +129,18 @@ We perform two series of experiment:
 1. **Increment**: in this series of experiment the smart contract increments
    the input it receives by 1.
 2. **Simple crypto**: in this series of experiment the smart contract performs a
-   simple operation on ed25519 elliptic curves. The smart contract takes a scalar (s) in argument. It then performs `s*G`, where `G` is the ed25519 base point.
+   simple operation on ed25519 elliptic curves. The smart contract takes a
+   scalar (s) in argument. It then performs `s*G`, where `G` is the ed25519 base
+   point.
 
 ## Results
 
-|   [ns/op]    |Increment|Simple crypto|
-|--------------|---------|-------------|
-| Native       |0.00     |0.005        |
-| Unikernel    |0.470    |             |
-| TCP          |0.014    |             |
-| Solidity     |0.001    |0.237        |
-| Solidity TCP |0.014    |             |
-| WASM Go      |0.0238   |0.058        |
-| WASM C       |0.0162   |0.052        |
+|   [ns/op]    |Increment  |Simple crypto|
+|--------------|-----------|-------------|
+| Native       |0.00       |0.005        |
+| Unikernel    |2342209082 |6072048716   |
+| TCP          |0.014      |0.03646      |
+| Solidity     |0.001      |0.237        |
+| Solidity TCP |0.014      |             |
+| WASM Go      |0.0238     |0.058        |
+| WASM C       |0.0162     |0.052        |

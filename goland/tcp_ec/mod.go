@@ -1,22 +1,27 @@
-// Package tcp implements an execution environment that sends a value to a TCP
-// server and stores it back. Used for the "increment" benchmark.
-package tcp
+// Package tcp_ec implements an execution environment to compute s*G using a TCP
+// server.
+package tcp_ec
 
 import (
-	"encoding/binary"
 	"net"
 	"os"
 	"time"
 
+	"encoding/hex"
+
 	"go.dedis.ch/dela"
 	"go.dedis.ch/dela/core/execution"
 	"go.dedis.ch/dela/core/store"
+	"go.dedis.ch/kyber/v3/suites"
 	"golang.org/x/xerrors"
 )
 
-const defaultUnikernelAddr = "192.168.232.128:12345"
+const defaultTCPAddr = "127.0.0.1:1024"
 
 var storeKey = [32]byte{0, 0, 10}
+var resultKey = [32]byte{0, 0, 40}
+
+var suite = suites.MustFind("Ed25519")
 
 const addrArg = "tcp:addr"
 const dialTimeout = time.Second * 1
@@ -30,7 +35,9 @@ func NewExecution() *Service {
 	return &Service{}
 }
 
-// Execute ...
+// Execute uses a unikernel to perform s*G. A random scalar is hex encoded and
+// save in the relevant file that the unikernel use. A TCP command is then sent
+// to call the unikernel. The result is a point returned by the unikernel.
 func (hs *Service) Execute(snap store.Snapshot, step execution.Step) (execution.Result, error) {
 	res := execution.Result{}
 
@@ -47,23 +54,25 @@ func (hs *Service) Execute(snap store.Snapshot, step execution.Step) (execution.
 	if addr == "" {
 		addr = os.Getenv("UNIKERNEL_TCP")
 		if addr == "" {
-			addr = defaultUnikernelAddr
+			addr = defaultTCPAddr
 		}
 	}
+
+	hexBuf := hex.EncodeToString(current)
 
 	conn, err := net.DialTimeout("tcp", string(addr), dialTimeout)
 	if err != nil {
 		return res, xerrors.Errorf("failed to connect to tcp with %s: %v", addr, err)
 	}
 
-	dela.Logger.Info().Msgf("sending value: %d", binary.LittleEndian.Uint64(current))
+	dela.Logger.Info().Msgf("sending scalar value: %s", hexBuf)
 
-	_, err = conn.Write(current)
+	_, err = conn.Write([]byte(hexBuf))
 	if err != nil {
-		return res, xerrors.Errorf("failed to send to unikernel: %v", err)
+		return res, xerrors.Errorf("failed to send to tcp server: %v", err)
 	}
 
-	readRes := make([]byte, 8)
+	readRes := make([]byte, 64)
 
 	conn.SetReadDeadline(time.Now().Add(time.Second * 10))
 
@@ -72,12 +81,19 @@ func (hs *Service) Execute(snap store.Snapshot, step execution.Step) (execution.
 		return res, xerrors.Errorf("failed to read result: %v", err)
 	}
 
-	err = snap.Set([]byte(storeKey[:]), readRes)
-	if err != nil {
-		return res, xerrors.Errorf("failed to set store value: %v", err)
-	}
+	snap.Set(resultKey[:], readRes)
 
-	dela.Logger.Info().Msgf("set new value:  %d", binary.LittleEndian.Uint64(readRes))
+	// resultBuf, err := hex.DecodeString(string(readRes))
+	// if err != nil {
+	// 	return res, xerrors.Errorf("failed to read result: %v", err)
+	// }
+
+	// err = suite.Point().UnmarshalBinary(resultBuf)
+	// if err != nil {
+	// 	return res, xerrors.Errorf("failed to unmarshal point: %v", err)
+	// }
+
+	dela.Logger.Info().Msgf("got result: %s", readRes)
 
 	return execution.Result{
 		Accepted: true,
