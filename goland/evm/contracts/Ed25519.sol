@@ -112,7 +112,7 @@ contract Ed25519 {
         Point memory b;
         Point memory result;
 
-        for (uint i=0; i < 1e1; i++){
+        for (uint i=0; i < 1e3; i++){
             b.x = 0;
             b.y = 0;
             b.z = 0;

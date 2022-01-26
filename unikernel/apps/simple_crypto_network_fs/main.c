@@ -39,7 +39,7 @@
 
 #define DEFAULT_LISTEN_PORT 12345
 
-#define ITERATIONS 1e1
+#define ITERATIONS 1e3
 
 /* "shortcut" for struct sockaddr structure */
 #define SSA struct sockaddr

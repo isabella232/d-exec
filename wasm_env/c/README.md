@@ -43,7 +43,7 @@ Set a variable that points to the `libs` folder and the
 
 ```sh
 LIBS_PATH=/home/nkcr/d-exec/wasm_env/libs
-LIBSODIUM_SRC=$LIBS_PATH/libsodium/src/libsodium
+LIBSODIUM_SRC=$LIBS_PATH/libsodium-stable/src/libsodium
 
 emcc ed25519_gen_mul.c \
     $LIBSODIUM_SRC/crypto_scalarmult/ed25519/ref10/*.c \

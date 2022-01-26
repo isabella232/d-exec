@@ -92,7 +92,7 @@ extern "C"
         // mul 10k : 34
         // add 10k : 593
 
-        for (int i = 0; i < 1e1; ++i)
+        for (int i = 0; i < 1e3; ++i)
         {
             crypto_scalarmult_ed25519_base(point, scalar);
         }

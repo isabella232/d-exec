@@ -78,7 +78,7 @@ func BenchmarkNative_EC(b *testing.B) {
 		scalar := suite.Scalar().Pick(suite.RandomStream())
 		_, err := scalar.MarshalBinary()
 		require.NoError(b, err)
-		for k := 0; k < 1e6; k++ {
+		for k := 0; k < 1e3; k++ {
 
 			point := suite.Point().Mul(scalar, nil)
 			_, err = point.MarshalBinary()
