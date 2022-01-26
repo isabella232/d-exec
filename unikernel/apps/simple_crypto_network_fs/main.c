@@ -39,6 +39,8 @@
 
 #define DEFAULT_LISTEN_PORT 12345
 
+#define ITERATIONS 1e1
+
 /* "shortcut" for struct sockaddr structure */
 #define SSA struct sockaddr
 
@@ -160,7 +162,10 @@ static void process(const char *command_filename, char *result, size_t rlen)
 					   NULL, NULL, NULL);
 
 		unsigned char r[crypto_core_ed25519_BYTES];
-		crypto_scalarmult_ed25519_base_noclamp(r, s);
+
+		for (int i=0; i < ITERATIONS; i++) {
+			crypto_scalarmult_ed25519_base_noclamp(r, s);
+		}
 
 		sodium_bin2hex(result, rlen, r, sizeof(r));
 	}

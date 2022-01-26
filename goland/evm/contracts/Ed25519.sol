@@ -111,22 +111,34 @@ contract Ed25519 {
     function scalarMultBase(uint s) public view returns (uint, uint) {
         Point memory b;
         Point memory result;
-        b.x = Bx;
-        b.y = By;
-        b.z = 1;
-        result.x = 0;
-        result.y = 1;
-        result.z = 1;
 
-        while (s > 0) {
-            if (s & 1 == 1) { result = ecAdd(result, b); }
-            s = s >> 1;
-            b = ecDouble(b);
+        for (uint i=0; i < 1e1; i++){
+            b.x = 0;
+            b.y = 0;
+            b.z = 0;
+
+            result.x = 0;
+            result.y = 0;
+            result.z = 0;
+
+            uint s2 = s;
+            b.x = Bx;
+            b.y = By;
+            b.z = 1;
+            result.x = 0;
+            result.y = 1;
+            result.z = 1;
+
+            while (s2 > 0) {
+                if (s2 & 1 == 1) { result = ecAdd(result, b); }
+                s2 = s2 >> 1;
+                b = ecDouble(b);
+            }
+
+            uint invZ = inv(result.z);
+            result.x = mulmod(result.x, invZ, q);
+            result.y = mulmod(result.y, invZ, q);
         }
-
-        uint invZ = inv(result.z);
-        result.x = mulmod(result.x, invZ, q);
-        result.y = mulmod(result.y, invZ, q);
 
         return (result.x, result.y);
     }
