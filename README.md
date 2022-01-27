@@ -23,3 +23,13 @@ go test -benchmem -run=^$ -bench ^BenchmarkLocalTCP_Increment$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkUnikernelTCP_Increment$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkEVMTCP_Increment$ ./benchmark/...
 ```
+
+## Latest benchmark
+
+See [goland/benchmark/Report.md](goland/benchmark/Report.md).
+
+Code version: v0.0.1
+
+Result:
+
+![result](docs/images/bench-v0.0.1.png)
