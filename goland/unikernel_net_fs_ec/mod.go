@@ -80,7 +80,7 @@ func (hs *Service) Execute(snap store.Snapshot, step execution.Step) (execution.
 
 	readRes := make([]byte, 64)
 
-	conn.SetReadDeadline(time.Now().Add(time.Second * 10))
+	conn.SetReadDeadline(time.Now().Add(time.Second * 100))
 
 	_, err = conn.Read(readRes)
 	if err != nil {

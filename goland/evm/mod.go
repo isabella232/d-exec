@@ -308,7 +308,7 @@ func (e *evmService) ExecuteEd25519(input []byte) ([]byte, uint64, error) {
 
 	evm := vm.NewEVM(getBlockContext(timestamp), getTxContext(), e.stateDb, getChainConfig(), getVMConfig())
 
-	res, remainingGas, err := evm.Call(vm.AccountRef(accountAddr), instanceAddr, callData, uint64(1*WeiPerEther), big.NewInt(0))
+	res, remainingGas, err := evm.Call(vm.AccountRef(accountAddr), instanceAddr, callData, uint64(10000*WeiPerEther), big.NewInt(0))
 	if err != nil {
 		return nil, 0, xerrors.Errorf("failed to execute EVM view method: %+v", err)
 	}

@@ -144,3 +144,69 @@ We perform two series of experiment:
 | Solidity TCP |0.014      |             |
 | WASM Go      |0.0238     |0.058        |
 | WASM C       |0.0162     |0.052        |
+
+# Repetitive simple crypto operation
+
+In this series of experiments with execute the `s*G` operation a number of times
+inside the execution environment: the unikernel, tcp server, EVM. The benchmark
+runs the execution mutiple times, until having a stable result. The result is
+based on an average over 6 runs.
+
+## Result
+
+| [ns/op]            | 1e0       | 1e1        | 1e2       | 1e3         | 1e4        | 1e5         | 1e6          |
+|--------------------|-----------|------------|-----------|------------|------------|-------------|--------------|
+| Native             | 85237     | 796121     | 7524008   | 84807264   | 754702346  | 7688306495  | 84108037580  |
+| Unikernel (tcp+fs) | 101907643 | 103753734  | 112467733 | 146313097  | 340759106  | 2314039681  | 26744189506  |
+| EVM (local)        | 3917656   | 39468078   | 367289249 | 4143285328 | OOM        |             |              |
+| WASM C             | 1617968   | 3240597    | 16243341  | 147322609  | 1404344166 | 14450936473 | 177133558246 |
+
+## Procedures to setup and run the tests
+
+### WASM
+
+- edit `wasm_env/c/ed25519_gen_mul.c` and the loop condition at line 95:
+
+```c
+        for (int i = 0; i < 1e0; ++i)
+        {
+            crypto_scalarmult_ed25519_base(point, scalar);
+        }
+```
+
+- compile again with the instructions from `wasm_env/c/README.md`.
+
+- run the app, from `wasm_env`: `node app.js`
+
+- run the benchmark, from this folder: `go test --bench BenchmarkWASM_C_EC`
+
+### EVM
+
+- edit `goland/evm/contracts/Ed25519.sol` and the loop condition at line 115:
+
+```sol
+for (uint i=0; i < 1e4; i++){
+```
+
+- compile the contract, from `goland/evm/contracts`: `./make_ed.sh`
+
+- run the benchmark, from this folder: `go test --bench BenchmarkEVMLocal_EC`
+
+### Unikernel
+
+- edit `unikernel/apps/simple_crypto_network_js/main.c` and the `ITERATION`
+  constant at line 42:
+
+```c
+#define ITERATIONS 1e7
+```
+
+- compile the unikernel, from `unikernel/apps/simple_crypto_network_fs`: `make`
+
+- run the unikernel, from `unikernel/apps/simple_crypto_network_fs`: `./run`
+
+- run the benchmark, from this folder: `go test --bench BenchmarkUnikernel_Network_FS_Simple_EC`
+
+### Native
+
+- run the benchmark, from this folder: `go test --bench BenchmarkNative_EC`

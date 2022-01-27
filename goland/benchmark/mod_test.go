@@ -7,6 +7,7 @@ import (
 	"github.com/dedis/d-exec/goland/evm"
 	"github.com/dedis/d-exec/goland/tcp"
 	"github.com/dedis/d-exec/goland/tcp_ec"
+	"github.com/dedis/d-exec/goland/wasm"
 	"github.com/dedis/d-exec/goland/unikernel_net_fs_ec"
 
 	"github.com/stretchr/testify/require"
@@ -14,11 +15,14 @@ import (
 	"go.dedis.ch/dela/core/store"
 	"go.dedis.ch/dela/core/txn"
 	"go.dedis.ch/kyber/v3/suites"
+
+	"encoding/base64"
+	"encoding/json"
 )
 
 var storeKey = [32]byte{0, 0, 10}
 
-const iterations = 50
+const iterations = 1
 
 var suite = suites.MustFind("Ed25519")
 
@@ -70,14 +74,16 @@ func BenchmarkEVMTCP_Increment(b *testing.B) {
 // Simple crypto (Elliptic curve - EC) benchmarks
 
 func BenchmarkNative_EC(b *testing.B) {
-	for i := 0; i < iterations; i++ {
+	for i := 0; i < b.N; i++ {
 		scalar := suite.Scalar().Pick(suite.RandomStream())
 		_, err := scalar.MarshalBinary()
 		require.NoError(b, err)
+		for k := 0; k < 1e3; k++ {
 
-		point := suite.Point().Mul(scalar, nil)
-		_, err = point.MarshalBinary()
-		require.NoError(b, err)
+			point := suite.Point().Mul(scalar, nil)
+			_, err = point.MarshalBinary()
+			require.NoError(b, err)
+		}
 	}
 }
 
@@ -98,7 +104,7 @@ func BenchmarkEVMLocal_EC(b *testing.B) {
 	storage.Set(gasUsageKey[:], make([]byte, 8))
 	storage.Set(runCountKey[:], make([]byte, 8))
 
-	for i := 0; i < iterations; i++ {
+	for i := 0; i < b.N; i++ {
 		scalar := suite.Scalar().Pick(suite.RandomStream())
 
 		scalarBuf, err := scalar.MarshalBinary()
@@ -162,7 +168,7 @@ func BenchmarkUnikernel_Network_FS_Simple_EC(b *testing.B) {
 	}}
 	exec := unikernel_net_fs_ec.NewExecution()
 
-	for i := 0; i < iterations; i++ {
+	for i := 0; i < b.N; i++ {
 		scalar := suite.Scalar().Pick(suite.RandomStream())
 
 		scalarBuf, err := scalar.MarshalBinary()
@@ -176,6 +182,73 @@ func BenchmarkUnikernel_Network_FS_Simple_EC(b *testing.B) {
 			b.FailNow()
 		}
 	}
+}
+
+func BenchmarkWASM_Go_EC(b *testing.B) {
+	srvc := wasm.WASMService{}
+	for i := 0; i < iterations; i++ {
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+		scalarB, _ := scalar.MarshalBinary()
+		args := map[string]interface{}{
+			"scalar":           base64.StdEncoding.EncodeToString(scalarB),
+			"contractName":     "simpleEC",
+			"contractLanguage": "go",
+		}
+		marsh, err := json.Marshal(args)
+		if err != nil {
+			b.Error(err)
+		}
+		step := execution.Step{}
+		step.Current = fakeTx{json: marsh}
+
+		_, err = srvc.Execute(nil, step)
+		if err != nil {
+			b.Logf("failed to execute: %+v", err)
+			b.FailNow()
+		}
+	}
+}
+
+func BenchmarkWASM_C_EC(b *testing.B) {
+	var suite = suites.MustFind("Ed25519")
+	step := execution.Step{}
+
+	srvc := wasm.WASMService{}
+	for i := 0; i < b.N; i++ {
+		point1 := suite.Point().Pick(suite.RandomStream())
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+		point1B, _ := point1.MarshalBinary()
+		scalarB, _ := scalar.MarshalBinary()
+		// encoding to base64 because JSON does not support raw bytes
+		args := map[string]interface{}{
+			"point1":           base64.StdEncoding.EncodeToString(point1B),
+			"scalar":           base64.StdEncoding.EncodeToString(scalarB),
+			"contractName":     "ed25519_gen_mul",
+			"contractLanguage": "c",
+		}
+		marsh, err := json.Marshal(args)
+		if err != nil {
+			b.Error(err)
+		}
+		step.Current = fakeTx{json: marsh}
+		_, err = srvc.Execute(nil, step)
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Utility functions
+
+type fakeExec struct {
+	err error
+}
+
+type fakeTx struct {
+	txn.Transaction
+	json []byte
+}
+
+func (tx fakeTx) GetArg(key string) []byte {
+	return []byte(tx.json)
 }
 
 func testWithAddr(b *testing.B, addr string) {
