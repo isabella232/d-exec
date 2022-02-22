@@ -2,7 +2,7 @@
 import java.io.*;
 import java.net.*;
 
-import smartcontract.SmartContract;
+import smartcontract.*;
 
 class Server {
   public static void main(String args[]) throws Exception {
@@ -17,7 +17,28 @@ class Server {
       }
     });
     
-    SmartContract sc = new SmartContract();
+    SmartContract sc;
+    int arraySize = 0;
+
+    try {
+      switch(args[0]) {
+        case "inc" -> {
+          sc =  new SmartIncrement();
+          arraySize = 8;
+        }
+        case "mul" -> {
+          sc =  new SmartScalarMult();
+          arraySize = 32;
+        }
+        default -> throw new Exception("wrong arguments on CLI");
+      }
+    }
+    catch(Exception e) {
+      System.out.println("Unknown smart contract type: please use 'inc' or 'mul'.");
+      ss.close();
+      return;
+    }
+
 
     try {      
       while (true) {
@@ -31,8 +52,8 @@ class Server {
         // DataOutputStream to write data on TCP output stream
         DataOutputStream out = new DataOutputStream(s.getOutputStream());
 
-        byte input_data[] = new byte[8];
-        inp.readFully(input_data);
+        byte input_data[] = new byte[arraySize];
+        inp.read(input_data, 0, arraySize);
 
         byte output_data[] = sc.Execute(input_data);
 
