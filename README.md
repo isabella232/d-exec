@@ -33,3 +33,10 @@ Code version: v0.0.1
 Result:
 
 ![result](docs/images/bench-v0.0.1.png)
+
+---
+
+<img width="200px" src="docs/images/unicore_logo.png"/>
+
+This project has received funding from the European Union's Horizon 2020 
+research and innovation programme under grant agreement No 825377.
