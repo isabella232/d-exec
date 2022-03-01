@@ -21,7 +21,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Cont
 ```bash
 java -version
 ```
-7) use GrallVM updater:
+7) use GraalVM updater:
 ```bash
 gu available
 ```
@@ -67,3 +67,10 @@ Note: be aware that you'll have to re-build the `Server.java` using:
 ./build.sh
 ```
 whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
+
+libsodium installation:
+=======================
+On macOS, use the following:
+```bash
+brew install libsodium
+```

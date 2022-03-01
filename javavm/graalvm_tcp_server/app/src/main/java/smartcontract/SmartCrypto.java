@@ -1,6 +1,7 @@
 package smartcontract;
 
 import java.lang.reflect.Method;
+
 import org.apache.tuweni.crypto.sodium.Sodium;
 
 public class SmartCrypto {
@@ -9,7 +10,6 @@ public class SmartCrypto {
         try {
             Method m = Sodium.class.getDeclaredMethod(
                     "crypto_scalarmult_ed25519_base_noclamp",
-                    Sodium.class,
                     byte[].class,
                     byte[].class);
             m.setAccessible(true); //if security settings allow this

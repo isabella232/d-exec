@@ -3,7 +3,7 @@ package smartcontract;
 public class SmartScalarMult implements SmartContract {
 
   public byte[] Execute(byte[] input) throws SmartContractException {
-    final int ITERATIONS = 1000;
+    final int ITERATIONS = 100;
 
     if (input.length != crypto_core_ed25519_SCALARBYTES) {
       throw new SmartContractException("failed to process: input should be 8 bytes long!");
@@ -28,9 +28,7 @@ public class SmartScalarMult implements SmartContract {
 
     // sodium_bin2hex(result, rlen, r, sizeof(r));
     // ----------------------------- >8
-
-    byte[] buffer = new byte[crypto_core_ed25519_SCALARBYTES];
-
+    
     byte[] output = new byte[crypto_core_ed25519_SCALARBYTES];
 
     SmartCrypto sc = new SmartCrypto();
