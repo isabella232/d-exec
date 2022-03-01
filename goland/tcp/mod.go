@@ -85,8 +85,8 @@ func (hs *Service) ExecuteIncrement(snap store.Snapshot, step execution.Step) (e
 	}, nil
 }
 
-// ExecuteScalarMultiply execute a scalar multiplication on stored data
-func (hs *Service) ExecuteScalarMultiply(snap store.Snapshot, step execution.Step) (execution.Result, error) {
+// ExecuteGraalvmScalarMultiply execute a scalar multiplication on stored data
+func (hs *Service) ExecuteGraalvmScalarMultiply(snap store.Snapshot, step execution.Step) (execution.Result, error) {
 	res := execution.Result{}
 
 	storedData, err := snap.Get(storeKey[:])
@@ -96,10 +96,7 @@ func (hs *Service) ExecuteScalarMultiply(snap store.Snapshot, step execution.Ste
 
 	addr := string(step.Current.GetArg(addrArg))
 	if addr == "" {
-		addr = os.Getenv("UNIKERNEL_TCP")
-		if addr == "" {
-			addr = defaultUnikernelAddr
-		}
+		return res, xerrors.Errorf("undefined address: %v", addr)
 	}
 
 	conn, err := net.DialTimeout("tcp", string(addr), dialTimeout)
@@ -116,7 +113,7 @@ func (hs *Service) ExecuteScalarMultiply(snap store.Snapshot, step execution.Ste
 
 	readRes := make([]byte, 64)
 
-	conn.SetReadDeadline(time.Now().Add(time.Second * 10))
+	conn.SetReadDeadline(time.Now().Add(time.Second * 100))
 
 	_, err = conn.Read(readRes)
 	if err != nil {

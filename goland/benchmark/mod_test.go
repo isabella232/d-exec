@@ -40,7 +40,27 @@ func BenchmarkGraalvmTCP_Increment(b *testing.B) {
 }
 
 func BenchmarkGraalvmTCP_ScalarMultiply(b *testing.B) {
-	testScalarMultiplyOnTCP(b, "127.0.0.1:12347")
+	addr := "127.0.0.1:12347"
+	storage := newInmemory()
+	step := execution.Step{Previous: []txn.Transaction{}, Current: tx{
+		args: map[string][]byte{"tcp:addr": []byte(addr)},
+	}}
+	exec := tcp.NewExecution()
+
+	for i := 0; i < b.N; i++ {
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+
+		scalarBuf, err := scalar.MarshalBinary()
+		require.NoError(b, err)
+
+		storage.Set(storeKey[:], scalarBuf)
+
+		_, err = exec.ExecuteGraalvmScalarMultiply(storage, step)
+		if err != nil {
+			b.Logf("failed to execute; %v", err)
+			b.FailNow()
+		}
+	}
 }
 
 func BenchmarkLocalTCP_Increment(b *testing.B) {
@@ -272,28 +292,6 @@ func testIncrementOnTCP(b *testing.B, addr string) {
 
 	for i := 0; i < n; i++ {
 		_, err := exec.ExecuteIncrement(storage, step)
-		if err != nil {
-			b.Logf("failed to execute; %v", err)
-			b.FailNow()
-		}
-	}
-}
-
-func testScalarMultiplyOnTCP(b *testing.B, addr string) {
-	n := iterations
-
-	storage := newInmemory()
-	step := execution.Step{Previous: []txn.Transaction{}, Current: tx{
-		args: map[string][]byte{"tcp:addr": []byte(addr)},
-	}}
-	exec := tcp.NewExecution()
-
-	buffer := []byte("ec_multiply")
-	storage.Set(storeKey[:], buffer)
-
-	for i := 0; i < n; i++ {
-		b.Logf("round #%v", i)
-		_, err := exec.ExecuteScalarMultiply(storage, step)
 		if err != nil {
 			b.Logf("failed to execute; %v", err)
 			b.FailNow()

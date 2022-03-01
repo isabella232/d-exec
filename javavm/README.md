@@ -70,7 +70,7 @@ whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
 
 libsodium installation:
 =======================
-On macOS, use the following:
+On macOS, use the following to install libsodium in the jvm libraries:
 ```bash
 brew install libsodium
 ```
