@@ -74,3 +74,16 @@ On macOS, use the following to install libsodium in the jvm libraries:
 ```bash
 brew install libsodium
 ```
+
+gradle:
+=======
+
+Follow this link to install gradle: https://gradle.org/install/
+
+On linux and macOS, use the following command to build and to run the TCP app:
+```bash
+gradle run --args='mul'
+```
+from the directory 'graalvm_tcp_server'.
+
+On windows, use 'gradlew.bat' instead (not tested yet).
