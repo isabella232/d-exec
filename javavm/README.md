@@ -62,11 +62,8 @@ jenv shell 17.0.1
 jenv version --verbose
 ```
 
-Note: be aware that you'll have to re-build the `Server.java` using:
-```bash
-./build.sh
-```
-whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
+Note: be aware that you'll have to re-build tcp server using whenever you change
+ from one env (i.e. jdk) to another (i.e. graalvm).
 
 libsodium installation:
 =======================
@@ -77,13 +74,12 @@ brew install libsodium
 
 gradle:
 =======
-
 Follow this link to install gradle: https://gradle.org/install/
 
-On linux and macOS, use the following command to build and to run the TCP app:
+On linux and macOS, go to the directory 'graalvm_tcp_server' and use the following
+ command to build and to run the TCP app:
 ```bash
 gradle run --args='mul'
 ```
-from the directory 'graalvm_tcp_server'.
 
 On windows, use 'gradlew.bat' instead (not tested yet).

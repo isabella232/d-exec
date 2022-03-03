@@ -5,10 +5,10 @@ Contains experimental execution examples for DELA
 
 ## Run benchmarks:
 For the benchmarks using an increment on a TCP server, you'll need to build and 
-start the TCP server from within the javavm using:
-   ```bash
-   ./build.sh
-   ```
+start the TCP server from within the javavm/graalvm_tcp_server directory using:
+```bash
+gradle run --args="mul"
+```
 
 Please read the `README.md` in the javavm directory for more details.
 
@@ -19,6 +19,7 @@ go test -benchmem -run=^$ -bench ^BenchmarkEVMLocal_Increment$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkNative_EC$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkEVMLocal_EC$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkGraalvmTCP_Increment$ ./benchmark/...
+go test -benchmem -run=^$ -bench ^BenchmarkGraalvmTCP_ScalarMultiply$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkLocalTCP_Increment$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkUnikernelTCP_Increment$ ./benchmark/...
 go test -benchmem -run=^$ -bench ^BenchmarkEVMTCP_Increment$ ./benchmark/...
@@ -28,11 +29,11 @@ go test -benchmem -run=^$ -bench ^BenchmarkEVMTCP_Increment$ ./benchmark/...
 
 See [goland/benchmark/Report.md](goland/benchmark/Report.md).
 
-Code version: v0.0.1
+Code version: v0.0.2
 
 Result:
 
-![result](docs/images/bench-v0.0.1.png)
+![result](docs/images/bench-v0.0.2.png)
 
 ---
 
