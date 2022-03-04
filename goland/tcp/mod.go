@@ -90,8 +90,11 @@ func (hs *Service) ExecuteGraalvmScalarMultiply(snap store.Snapshot, step execut
 	res := execution.Result{}
 
 	storedData, err := snap.Get(storeKey[:])
-	if err != nil || len(storedData) == 0 {
+	if err != nil {
 		return res, xerrors.Errorf("failed to get store value: %v", err)
+	}
+	if storedData == nil {
+		return res, xerrors.Errorf("value does not exist for given key: %v", storeKey[:])
 	}
 
 	addr := string(step.Current.GetArg(addrArg))

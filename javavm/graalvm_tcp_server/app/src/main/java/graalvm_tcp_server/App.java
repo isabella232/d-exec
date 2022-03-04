@@ -3,27 +3,24 @@
  */
 package graalvm_tcp_server;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import smartcontract.*;
+import smartcontract.SmartContract;
+import smartcontract.SmartIncrement;
+import smartcontract.SmartScalarMult;
 
 public class App {
     public static void main(String args[]) throws Exception {
         final int portNumber = 12347;
         ServerSocket ss = new ServerSocket(portNumber);
         System.out.println("TCP server started on port " + portNumber);
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                System.out.println("Shutdown Hook called");
-            }
-        });
-
+        
         SmartContract sc;
         int arraySize = 0;
-
+        
         try {
             switch (args[0]) {
                 case "inc" -> {
@@ -41,10 +38,10 @@ public class App {
             ss.close();
             return;
         }
-
+        
         try {
             while (true) {
-                // Waiting for socket connection
+            // Waiting for socket connection
                 Socket s = ss.accept();
                 System.out.println("\nNew connection accepted");
 
