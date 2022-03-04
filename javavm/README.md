@@ -1,5 +1,5 @@
-GraalVM installation:
-=====================
+## GraalVM installation
+
 Source: https://www.graalvm.org/docs/getting-started/#install-graalvm
 
 Main steps on MacOS:
@@ -21,7 +21,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Cont
 ```bash
 java -version
 ```
-7) use GrallVM updater:
+7) use GraalVM updater:
 ```bash
 gu available
 ```
@@ -30,8 +30,8 @@ gu available
 gu install native-language
 ```
    
-jenv installation:
-==================
+## jenv installation
+
 Source: https://www.jenv.be
 
 Once installed, you'll need to source your ~/.bash_profile to ensure that you 
@@ -62,8 +62,24 @@ jenv shell 17.0.1
 jenv version --verbose
 ```
 
-Note: be aware that you'll have to re-build the `Server.java` using:
+Note: be aware that you'll have to re-build the tcp server whenever you change
+ from one env (i.e. jdk) to another (i.e. graalvm).
+
+## libsodium installation
+
+On macOS, use the following to install libsodium in the jvm libraries:
 ```bash
-./build.sh
+brew install libsodium
 ```
-whenever you change from one env (i.e. jdk) to another (i.e. graalvm).
+
+## gradle installation
+
+Follow this link to install gradle: https://gradle.org/install/
+
+On linux and macOS, go to the directory 'graalvm_tcp_server' and use the following
+ command to build and to run the TCP app:
+```bash
+gradle run --args='mul'
+```
+
+On windows, use 'gradlew.bat' instead (not tested yet).

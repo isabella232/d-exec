@@ -25,7 +25,7 @@ func TestService_Execute(t *testing.T) {
 		Current: fakeTx{address: "localhost:12347"},
 	}
 
-	res, err := srvc.Execute(store, step)
+	res, err := srvc.ExecuteIncrement(store, step)
 	require.NoError(t, err)
 	require.Equal(t, execution.Result{Accepted: true}, res)
 

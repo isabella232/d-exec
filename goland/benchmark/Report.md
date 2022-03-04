@@ -135,15 +135,15 @@ We perform two series of experiment:
 
 ## Results
 
-|   [ns/op]    |Increment  |Simple crypto|
-|--------------|-----------|-------------|
-| Native       |0.00       |0.005        |
-| Unikernel    |2342209082 |6072048716   |
-| TCP          |0.014      |0.03646      |
-| Solidity     |0.001      |0.237        |
-| Solidity TCP |0.014      |             |
-| WASM Go      |0.0238     |0.058        |
-| WASM C       |0.0162     |0.052        |
+|   [ns/op]    | Increment     | Simple crypto  |
+|--------------|---------------|----------------|
+| Unikernel    | 2'342'209'082 |  6'072'048'716 |
+| Native       | 0.000         | 0.005          |
+| TCP          | 0.014         | 0.03646        |
+| Solidity     | 0.001         | 0.237          |
+| Solidity TCP | 0.014         |                |
+| WASM Go      | 0.0238        | 0.058          |
+| WASM C       | 0.0162        | 0.052          |
 
 # Repetitive simple crypto operation
 
@@ -154,12 +154,13 @@ based on an average over 6 runs.
 
 ## Result
 
-| [ns/op]            | 1e0       | 1e1        | 1e2       | 1e3         | 1e4        | 1e5         | 1e6          |
-|--------------------|-----------|------------|-----------|------------|------------|-------------|--------------|
-| Native             | 85237     | 796121     | 7524008   | 84807264   | 754702346  | 7688306495  | 84108037580  |
-| Unikernel (tcp+fs) | 101907643 | 103753734  | 112467733 | 146313097  | 340759106  | 2314039681  | 26744189506  |
-| EVM (local)        | 3917656   | 39468078   | 367289249 | 4143285328 | OOM        |             |              |
-| WASM C             | 1617968   | 3240597    | 16243341  | 147322609  | 1404344166 | 14450936473 | 177133558246 |
+| [ns/op]            | 1e0       | 1e1       | 1e2       | 1e3         | 1e4         | 1e5          | 1e6           |
+|--------------------|-----------|-----------|-----------|-------------|-------------|--------------|---------------|
+| Native             |     85'237|    796'121|  7'524'008|   84'807'264|  754'702'346| 7'688'306'495| 84'108'037'580|
+| Unikernel (tcp+fs) |101'907'643|103'753'734|112'467'733|  146'313'097|  340'759'106| 2'314'039'681| 26'744'189'506|
+| Graalvm            |  1'381'074|  1'929'079|  5'026'913|   36'368'261|  287'772'421| 2'573'941'698| 27'242'434'886|
+| EVM (local)        |  3'917'656| 39'468'078|367'289'249|4'143'285'328| OutOfMemory |              |               |
+| WASM C             |  1'617'968|  3'240'597| 16'243'341|  147'322'609|1'404'344'166|14'450'936'473|177'133'558'246|
 
 ## Procedures to setup and run the tests
 
@@ -194,7 +195,7 @@ for (uint i=0; i < 1e4; i++){
 
 ### Unikernel
 
-- edit `unikernel/apps/simple_crypto_network_js/main.c` and the `ITERATION`
+- edit `unikernel/apps/simple_crypto_network_js/main.c` and the `ITERATIONS`
   constant at line 42:
 
 ```c
@@ -210,3 +211,18 @@ for (uint i=0; i < 1e4; i++){
 ### Native
 
 - run the benchmark, from this folder: `go test --bench BenchmarkNative_EC`
+
+### GraalVM
+
+- use jenv to select graalvm as JVM
+
+- edit `javavm/graalvm_tcp_server/app/src/main/java/smartcontract/SmartScalarMult.java` 
+  and the `ITERATIONS` constant at line 6:
+
+```java
+final double ITERATIONS = 1e6;
+```
+
+- build and run the java TCP server from `javavm/graalvm_tcp_server`: `./gradle run --args="mul"`
+
+- run the benchmark, from this folder: `go test --bench BenchmarkGraalvmTCP_ScalarMultiply`

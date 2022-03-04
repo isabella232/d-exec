@@ -31,3 +31,6 @@ unikernel/simple_c_crypto/main
 
 wasm_env/libs
 wasm_env/node_modules
+
+.idea
+.vscode

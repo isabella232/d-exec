@@ -7,8 +7,8 @@ import (
 	"github.com/dedis/d-exec/goland/evm"
 	"github.com/dedis/d-exec/goland/tcp"
 	"github.com/dedis/d-exec/goland/tcp_ec"
-	"github.com/dedis/d-exec/goland/wasm"
 	"github.com/dedis/d-exec/goland/unikernel_net_fs_ec"
+	"github.com/dedis/d-exec/goland/wasm"
 
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/core/execution"
@@ -36,15 +36,39 @@ func BenchmarkNative_Increment(b *testing.B) {
 }
 
 func BenchmarkGraalvmTCP_Increment(b *testing.B) {
-	testWithAddr(b, "127.0.0.1:12347")
+	testIncrementOnTCP(b, "127.0.0.1:12347")
+}
+
+func BenchmarkGraalvmTCP_ScalarMultiply(b *testing.B) {
+	addr := "127.0.0.1:12347"
+	storage := newInmemory()
+	step := execution.Step{Previous: []txn.Transaction{}, Current: tx{
+		args: map[string][]byte{"tcp:addr": []byte(addr)},
+	}}
+	exec := tcp.NewExecution()
+
+	for i := 0; i < b.N; i++ {
+		scalar := suite.Scalar().Pick(suite.RandomStream())
+
+		scalarBuf, err := scalar.MarshalBinary()
+		require.NoError(b, err)
+
+		storage.Set(storeKey[:], scalarBuf)
+
+		_, err = exec.ExecuteGraalvmScalarMultiply(storage, step)
+		if err != nil {
+			b.Logf("failed to execute; %v", err)
+			b.FailNow()
+		}
+	}
 }
 
 func BenchmarkLocalTCP_Increment(b *testing.B) {
-	testWithAddr(b, "127.0.0.1:12346")
+	testIncrementOnTCP(b, "127.0.0.1:12346")
 }
 
 func BenchmarkUnikernelTCP_Increment(b *testing.B) {
-	testWithAddr(b, "172.44.0.2:12345")
+	testIncrementOnTCP(b, "172.44.0.2:12345")
 }
 
 func BenchmarkEVMLocal_Increment(b *testing.B) {
@@ -68,7 +92,7 @@ func BenchmarkEVMLocal_Increment(b *testing.B) {
 }
 
 func BenchmarkEVMTCP_Increment(b *testing.B) {
-	testWithAddr(b, "127.0.0.1:12347")
+	testIncrementOnTCP(b, "127.0.0.1:12347")
 }
 
 // Simple crypto (Elliptic curve - EC) benchmarks
@@ -251,7 +275,7 @@ func (tx fakeTx) GetArg(key string) []byte {
 	return []byte(tx.json)
 }
 
-func testWithAddr(b *testing.B, addr string) {
+func testIncrementOnTCP(b *testing.B, addr string) {
 	n := iterations
 
 	storage := newInmemory()
@@ -267,7 +291,7 @@ func testWithAddr(b *testing.B, addr string) {
 	storage.Set(storeKey[:], buffer)
 
 	for i := 0; i < n; i++ {
-		_, err := exec.Execute(storage, step)
+		_, err := exec.ExecuteIncrement(storage, step)
 		if err != nil {
 			b.Logf("failed to execute; %v", err)
 			b.FailNow()

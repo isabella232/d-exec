@@ -1,25 +1,22 @@
 package smartcontract;
 
-/**
- *  @brief Smart contract example that just increment a long
- */
-public class SmartContract {
+public class SmartIncrement implements SmartContract {
 
   public byte[] Execute(byte[] input) throws SmartContractException {
-    if (input.length > 8) {
+    if (input.length != 8) {
       throw new SmartContractException("failed to process: input should be 8 bytes long!");
     }
-
+  
     long value = convertToLong(input);
     
     System.out.println("Received value: " + value);
-
+  
     value++;
-
+  
     System.out.println("Incremented value sent back: " + value);
-
+  
     byte[] output = longtoBytes(value);
-
+  
     return output;
   }
 
