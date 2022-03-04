@@ -195,7 +195,7 @@ for (uint i=0; i < 1e4; i++){
 
 ### Unikernel
 
-- edit `unikernel/apps/simple_crypto_network_js/main.c` and the `ITERATION`
+- edit `unikernel/apps/simple_crypto_network_js/main.c` and the `ITERATIONS`
   constant at line 42:
 
 ```c
@@ -211,3 +211,18 @@ for (uint i=0; i < 1e4; i++){
 ### Native
 
 - run the benchmark, from this folder: `go test --bench BenchmarkNative_EC`
+
+### GraalVM
+
+- use jenv to select graalvm as JVM
+
+- edit `javavm/graalvm_tcp_server/app/src/main/java/smartcontract/SmartScalarMult.java` 
+  and the `ITERATIONS` constant at line 6:
+
+```java
+final double ITERATIONS = 1e6;
+```
+
+- build and run the java TCP server from `javavm/graalvm_tcp_server`: `./gradle run --args="mul"`
+
+- run the benchmark, from this folder: `go test --bench BenchmarkGraalvmTCP_ScalarMultiply`
